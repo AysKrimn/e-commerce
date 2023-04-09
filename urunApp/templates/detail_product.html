@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block baslik %}  {{data.ad}} {% endblock baslik %}
+
+{% block ekOgeler %}
+  
+<style>
+
+.product-showcase {
+
+    width: 50%;
+    margin: auto;
+}
+
+.product-showcase img { width: 100%;}
+
+</style>
+{% endblock ekOgeler %}
+
+{% block site-icerigi %}
+  
+
+<div class="container mt-5">
+
+
+    <div class="row">
+
+        <div class="col-12">
+
+
+            <div class="row">
+
+                <div class="col-lg-6">
+                    <!--  resim alanı -->
+                    <div class="product-showcase">
+                        <img src="/{{data.resimKontrol}}" alt="{{data.ad}}">
+                    </div>
+                   
+                </div>
+
+                <div class="col-lg-6">
+
+                <h3>{{data.ad}}</h3>
+                <hr>
+                <p> <b>Seri Numarası:</b> {{data.seriNumarasiKontrol}}</p>
+                <p> <b>Ürünün Açıklaması: </b> {{data.urunDetayi}}</p>
+                <p> <b>Tutar:</b> {{data.fiat}} TL</p>
+                <p> <b>Stok:</b> {{data.stokKontrol}}</p>
+                <p> <b>Garantisi:</b> {{data.garantiKontrol}} </p>
+
+             
+
+                </div>
+
+
+        
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+
+    <div class="mt-4">
+        <h3>Yorumlar</h3>
+        <hr>
+
+        {% for yorumcu in data.yorumlar.all %}
+          
+        <div class="card mb-4">
+            <div class="card-header">
+             <h5> {{yorumcu.yazar}} </h5>
+            </div>
+            <div class="card-body">
+              <blockquote class="blockquote mb-0">
+                <p>{{yorumcu.mesaj}}</p>
+                <footer class="blockquote-footer mt-2"> <small>{{yorumcu.olusturuldu}}</small>  </footer>
+              </blockquote>
+            </div>
+          </div>
+
+        {% endfor %}
+
+        <!-- Yorum Yap -->
+        <div class="mt-5" style="width: 50%;">
+
+            <form action="{% url 'yorum-yap' data.id %}" method="post">
+
+                {% csrf_token %}
+                <input type="text" name="author" placeholder="İsminiz">
+                <textarea placeholder="Ürün Hakkındaki Yorumunuz" name="message"></textarea>
+
+                <div class="mt-3">
+
+                    <button class="btn btn-primary" type="submit">Yorum Yap</button>
+                </div>
+            </form>
+          
+
+        </div>
+    </div>
+ 
+    
+
+</div>
+
+
+{% endblock site-icerigi %}

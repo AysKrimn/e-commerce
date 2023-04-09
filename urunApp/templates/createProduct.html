@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+
+{% block ekOgeler %}
+  
+<style>
+
+    .form-area {
+        width: 50%;
+        margin: auto;
+    }
+
+    .submitBtn button { width: 100%;}
+
+</style>
+{% endblock ekOgeler %}
+
+{% block site-icerigi %}
+  
+<div class="container mt-5">
+
+    <div class="form-area">
+
+    <form action="{% url 'create-product' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {{form}}
+
+        <div class="submitBtn">
+            <button class="btn btn-success">Oluştur</button>
+        </div>
+
+    </form>
+
+</div>
+</div>
+
+{% endblock site-icerigi %}
