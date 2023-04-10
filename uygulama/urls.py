@@ -1,4 +1,4 @@
-"""uygulama URL Configuration
+"""ilkUygulama URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.1/topics/http/urls/
@@ -15,19 +15,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-# konfigürasyon dosyaları
+
 from django.conf import settings
 from django.conf.urls.static import static
 
-# viewleri import
+# view dosyasını import et
 from urunApp.views import *
+from userApp.views import *
+# Dosyaları kayıt et
 urlpatterns = [
     path('yonetici/', admin.site.urls),
-    path('', anasayfa, name="anasayfa"),
-    path("urun/olustur", createProduct, name="create-product"),
-    path('urun/<urunId>', detail_page, name="urun-detay-sayfasi"),
-    path('yorum-yap/<urunId>', makeComment, name="yorum-yap"),
-    path('sayfa-bulunamadi', sayfa_bulunamadi, name="404")
-
-
+    path("", index, name="anasayfa"),
+    path("urun/<urunId>", urunDetay, name="urun-detay-sayfasi"),
+    path("bulunamadi", hataSayfasi, name="hata-sayfasi"),
+    path("urun-olustur", urunOlustur, name="urun-olustur"),
+    path("yorumlar/<yorumId>", editComment, name="yorum-duzenle"),
+    # user-login/register/signout
+    path('kayit-ol', user_register, name="user-register"),
+    path('giris-yap', user_login, name="user-login"),
+    path('cikis-yap', user_logout, name="user-logout")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
