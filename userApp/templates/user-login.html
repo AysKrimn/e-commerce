@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block siteBaslik %} Giriş Yap {% endblock siteBaslik %}
+
+{% block site-icerigi %}
+  
+<div class="container mt-5">
+
+<div class="form-area">
+
+<h3>Giriş Yap</h3>
+<hr>
+
+<form action=" {% url 'user-login' %}" method="post">
+
+{% csrf_token %}
+
+{% for message in messages %}
+
+{% if message.tag == success %}
+
+<p id="successMsg" style="color: green;"> {{message}} </p>
+
+{% else %}
+
+<p style="color: red;"> {{message}} </p>
+
+{% endif %}
+
+
+{% endfor %}
+<input type="text" class="form-control" placeholder="Kullanıcı Adı" name="k_ad">
+<input type="password" class="form-control" placeholder="Şifre" name="k_sifre">
+
+<span>Henüz hesabınız yok mu? <a href="{% url 'user-register' %}">buradan kayıt olabilirsiniz</a> </span>
+
+<div class="mt-3">
+    <button class="btn btn-success">Giriş Yap</button>
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+<script>
+
+const p = document.getElementById('successMsg')
+
+if(p) {
+
+    setTimeout(() => {
+        p.remove();
+    }, 5000);
+}
+
+</script>
+{% endblock site-icerigi %}
