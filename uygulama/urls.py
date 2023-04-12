@@ -29,7 +29,8 @@ urlpatterns = [
     path("urun/<urunId>", urunDetay, name="urun-detay-sayfasi"),
     path("bulunamadi", hataSayfasi, name="hata-sayfasi"),
     path("urun-olustur", urunOlustur, name="urun-olustur"),
-    path("yorumlar/<yorumId>", editComment, name="yorum-duzenle"),
+    path("yorumlar/gonderi/<urunId>/yorum/<yorumId>", editComment, name="yorum-duzenle"),
+    path("yorumlar/gonderi/<urunId>/yorum-sil/<yorumId>", deleteComment, name="yorum-sil"),
     # user-login/register/signout
     path('kayit-ol', user_register, name="user-register"),
     path('giris-yap', user_login, name="user-login"),
