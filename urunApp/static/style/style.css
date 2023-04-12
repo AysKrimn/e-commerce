@@ -1,0 +1,31 @@
+#site-nav {
+
+    background-color: rgb(12, 10, 10);
+    color:  white
+}
+
+#site-nav * {
+
+    color: inherit;
+}
+
+
+
+.card-author {
+
+    display: flex;
+}
+
+.card-author h5 {
+
+    margin-right: auto;
+}
+
+
+.form-area {
+    width: 50%;
+}
+form input,label,textarea {
+    display: block;
+    margin-bottom: 6px;
+}

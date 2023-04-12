@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block siteBaslik %} Yorumlar: {{data.yazar}} {% endblock siteBaslik %}
+
+{% block ekOgeler %}
+  
+<style>
+
+#elements-container {
+    width: 50%;
+}
+form input,label,textarea {
+
+    display: block;
+    width: 100%;
+}
+</style>
+
+{% endblock ekOgeler %}
+
+{% block site-icerigi %}
+
+
+<div class="container mt-5">
+
+    <h2>Yorum Düzenle</h2>
+    <hr>
+    <form action="{% url 'yorum-duzenle' data.id %}" method="post">
+            {% csrf_token %}
+            <div id="elements-container" class="mb-3">
+            
+                {{form}}
+            </div>
+    
+    
+    
+            <button type="submit" class="btn btn-primary">Düzenle</button>
+    
+    
+    </form>
+
+    </div>
+
+
+{% endblock site-icerigi %}

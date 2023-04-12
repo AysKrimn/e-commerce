@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+{% block siteBaslik %} AnaSayfa {% endblock siteBaslik %}
+
+{% block ekOgeler %}
+
+<style>
+
+.title {
+margin-bottom: 0;
+}
+
+.product-footer {
+
+padding: 8px;
+}
+.qr-code {
+
+padding-left: 8px;
+}
+
+</style>
+
+{% endblock ekOgeler %}
+
+
+
+{% block site-icerigi %}
+
+<div class="container">
+
+    <h1>En son eklenen ürünler</h1>
+
+    <div class="text-end">
+        <a href="{% url 'urun-olustur' %}">
+            <button class="btn btn-success">+</button>
+        </a>
+       
+    </div>
+
+    <hr>
+
+    <div class="row">
+
+    {% for veri in data  %}
+  
+    <div class="col-lg-4 mb-4">
+
+        <div class="card" style="width: 100%;">
+            <div class="card-body">
+
+            <a href="{% url 'urun-detay-sayfasi' veri.id %}">
+
+                    <h5 class="card-title title text-center">{{veri.ad}}</h5>
+            </a>
+          
+        
+            <div>
+                <img src="{{veri.resimAyarla}}" class="card-img-top" alt="...">
+            </div>
+            
+        
+         
+
+          
+           
+
+          </div>
+  
+          </div>
+
+    </div> 
+      
+    {% endfor %}
+
+    </div>
+
+</div>
+
+
+{% endblock site-icerigi %}

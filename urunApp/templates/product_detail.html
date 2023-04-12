@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block siteBaslik %} {{data.ad}} {% endblock siteBaslik %}
+
+
+
+
+{% block site-icerigi %}
+
+<div class="container mt-5">
+
+<div class="row">
+
+
+<div class="col-12">
+
+    <div class="row">
+        <div class="col-6">
+         <div class="card mb-3">
+            <img id="myimage" src="/{{data.resimAyarla}}" class="card-img-top" alt="...">
+        </div>
+
+        </div>
+
+
+
+        <div class="col-6">
+            
+            <div class="card-body">
+                <h1 class="card-title text-center">{{data.ad}}</h1>
+                <hr>
+                <p class="card-text"> <b>Ürün Açıklaması:</b> {{data.aciklama}}</p>
+                <p class="card-text"> <b>Ürün Fiyatı:</b> {{data.fiat}}</p>
+                <p class="card-text"> <b>Ürün Stok Sayısı:</b> {{data.stok}}</p>
+                <p class="card-text"> <b>Garanti:</b> {{data.garantiSorgula}}</p>
+            </div>
+
+        </div>
+
+
+    </div>
+
+      </div>
+
+</div>
+
+
+<div class="container-mt-5">
+
+    <h3>Yorumlar ({{data.yorumlar.count}})</h3>
+    <hr>
+
+    <!-- kullanıcının yapmış olduğu yorumlar -->
+    {% for yorumYapan in data.yorumlar.all %}
+
+    <div class="card mb-4">
+        <div class="card-header">
+        <div class="card-author">
+            <h5> {{yorumYapan.yazar}} </h5>
+            <a href="{% url 'yorum-duzenle' yorumYapan.id %}">Düzenle</a>
+        </div>
+
+        </div>
+
+        <div class="card-body">
+          <blockquote class="blockquote mb-0">
+            <p>{{yorumYapan.message}}</p>
+            <footer class="blockquote-footer mt-3"> <small>{{yorumYapan.tarih}}</small> </footer>
+          </blockquote>
+        
+        </div>
+      
+    </div>
+      
+    {% empty %}
+    <p>Bu ürün için hiç yorum yapılmamış.</p>
+    {% endfor %}
+    
+    <!-- yorum yapma alanı -->
+    {% if request.user.is_authenticated %}
+
+    <form class="mt-3" action="{% url 'urun-detay-sayfasi' data.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <input type="text" name="yazar" placeholder="Adınız" style="margin-bottom: 5px;">
+          <textarea type="text" name="message" style="max-height: 140px; height: 140px;" class="form-control" placeholder="Mesajınız..."></textarea>
+    
+        </div>
+
+        <div>
+            <button class="btn btn-primary" type="submit">Yorum Yap</button>
+        </div>
+    </form>
+
+    {% else %}
+      
+    <p class="text-center">Yorum yapmak için lütfen <a href="{% url 'user-login' %}"> giriş yapınız</a> </p>
+    {% endif %}
+
+
+</div>
+    
+</div>
+
+</div>
+{% endblock site-icerigi %}
