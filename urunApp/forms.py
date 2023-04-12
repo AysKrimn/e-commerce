@@ -6,8 +6,15 @@ from .models import *
 class EditComment(forms.ModelForm):
     class Meta:
         model=Yorumlar
-        fields=['yazar', 'message']
+        fields=['message']
 
+        widget = {
+        'message': forms.Textarea(attrs = 
+         {
+            'class': "form-control", 
+            'placeholder': "Yorumunuz"        
+        }),
+        }
 
 #  ürün olusturma modeli
 class CreateUrun(forms.ModelForm):

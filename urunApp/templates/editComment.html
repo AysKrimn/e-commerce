@@ -24,11 +24,12 @@ form input,label,textarea {
 
     <h2>Yorum Düzenle</h2>
     <hr>
-    <form action="{% url 'yorum-duzenle' data.id %}" method="post">
+    <form action="{% url 'yorum-duzenle' data.urun.id data.id %}" method="post">
             {% csrf_token %}
             <div id="elements-container" class="mb-3">
             
                 {{form}}
+
             </div>
     
     

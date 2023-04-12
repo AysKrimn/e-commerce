@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required
 # Ürün modelini dahil et
 from .models import *
+
 
 # Sayfalarımızı burada hazırlarız
 def index(request):
@@ -27,6 +31,7 @@ def checkPost(id):
     except:
         return False
 
+# @login_required(login_url='user-login')
 def urunDetay(request, urunId):
     # vertabanı sorgusu başlat
     context = {}
@@ -36,9 +41,8 @@ def urunDetay(request, urunId):
         urun = checkPost(urunId) # urun veya false gelecek
         if urun:
             # yorum içeriğine bir şeyler gönder
-            yazar = request.POST.get('yazar')
             message = request.POST.get('message')
-            urun.yorumlar.create(yazar=yazar, message=message).save()
+            urun.yorumlar.create(yazar=request.user, message=message).save()
             # bir sayfaya yönlendir
             return redirect('/urun/' + urunId)
     else:
@@ -76,10 +80,17 @@ def urunOlustur(request):
 
 # yorum düzenleme sayfasi
 from .forms import EditComment
-def editComment(request, yorumId):
+def editComment(request, urunId, yorumId):
     context = {}
-    yorum = Yorumlar.objects.get(id=yorumId)
-    print("YORUM ID:", yorum.urun.id)
+    yorum = Yorumlar.objects.filter(id=yorumId).first() # {} döndürür
+
+    if yorum is None:
+        # sessiona mesaj gönder
+        messages.warning(request, message="Üzgünüz... Aradığınız şeyi anlayamadık.")
+        return redirect("hata-sayfasi")
+    
+    if yorum.yazar.id != request.user.id:
+        raise PermissionDenied()
 
     if request.method == 'POST':
         # veritabanına gönder
@@ -99,3 +110,20 @@ def editComment(request, yorumId):
         context['data'] = yorum
         context['form'] = duzenle
         return render(request, "editComment.html", context)
+    
+
+# yorum sil (API)
+def deleteComment(request, urunId, yorumId):
+        
+        yorum = Yorumlar.objects.filter(id=yorumId).first() # {} döndürür
+        # eğer yoksa
+        if yorum is None:
+            messages.warning(request, message="Üzgünüz... Böyle bir yorum bulamadık.")
+            return redirect('hata-sayfasi')
+        # yetkisi yoksa
+        if yorum.yazar.id != request.user.id:
+           raise PermissionDenied()
+        
+        # yorumu sil
+        yorum.delete()
+        return redirect('/urun/' + str(urunId))

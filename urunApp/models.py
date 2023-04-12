@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 
 # Veritanı modellerini oluştur
 class Urun(models.Model):
@@ -45,7 +45,7 @@ class Urun(models.Model):
 class Yorumlar(models.Model):
     # tabloları birleştir
     urun = models.ForeignKey(Urun, verbose_name=("Ürün"), on_delete=models.CASCADE, related_name="yorumlar")
-    yazar = models.CharField(("Yorumu Yapan Kişi"), max_length=50)
+    yazar = models.ForeignKey(User, verbose_name=("Yazar"), on_delete=models.CASCADE)
     tarih = models.DateTimeField(auto_now_add=True)
     message = models.TextField(("Yorum"), max_length=100)
 
