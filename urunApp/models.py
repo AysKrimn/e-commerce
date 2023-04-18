@@ -6,6 +6,7 @@ class Urun(models.Model):
     # database fields
     # textfield ve charfield mutlaka max-length belirtilmelidir
     # her class otomatik bir şekilde eklenen ürüne id atar
+    olusturan = models.ForeignKey(User, verbose_name=("Ürünü Oluşturan"), on_delete=models.CASCADE, default=1)
     ad = models.CharField(("Ürünün Adı"), max_length=50)
     fiat = models.CharField(("Ürünün Fiatı"), max_length=6)
     aciklama = models.TextField(("Ürünün Açıklaması"),  max_length=200, default="Detay Belirtilmedi...")
@@ -20,7 +21,7 @@ class Urun(models.Model):
 
     def __str__(self):
         return self.ad
-    # veritabanına yeni bir veri eklendiginde veritabanını güncellemeyi unutma !
+    # veritabanına yeni bir veri eklendiginde veritabanını güncellemeyi unutma 
     # ayarla
     def garantiSorgula(self):
         garanti = self.garanti
@@ -52,3 +53,12 @@ class Yorumlar(models.Model):
     def __str__(self):
         return "{user} {product} ürüne yorum yaptı".format(user=self.yazar, product=self.urun.ad)
 
+
+
+# User Credit Card
+class CreditCardAccount(models.Model):
+    user = models.ForeignKey(User, verbose_name=("Hesap Sahibi"), on_delete=models.CASCADE)
+    cardNo = models.CharField(("Kart Numarası"), max_length=19)
+    cardOwner = models.CharField(("Kart Sahibi"), max_length=20)
+    expiredMonthAndYear = models.CharField(("Son Kullanım Tarihi"), max_length=4)
+    cvc = models.CharField(("Güvenlik Kodu"), max_length=3)

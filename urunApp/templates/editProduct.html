@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block siteBaslik %} Ürün Düzenle {% endblock siteBaslik %}
+
+{% block ekOgeler %}
+  
+<style>
+
+#elements-container {
+    width: 50%;
+}
+form input,label,textarea {
+
+    display: block;
+    width: 100%;
+}
+
+#resim-clear_id {
+
+    display: inline-block;
+    width: auto;
+}
+</style>
+
+{% endblock ekOgeler %}
+
+{% block site-icerigi %}
+
+
+<div class="container mt-5">
+
+    <h2>Ürün Düzenle</h2>
+    <hr>
+    <form action="{% url 'urun-duzenle' data.id %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div id="elements-container" class="mb-3">
+            
+                {{form}}
+
+            </div>
+    
+    
+    
+            <button type="submit" class="btn btn-primary">Düzenle</button>
+    
+    
+    </form>
+
+    </div>
+
+
+{% endblock site-icerigi %}

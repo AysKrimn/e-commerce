@@ -34,3 +34,9 @@ class CreateUrun(forms.ModelForm):
         # 'urunQRCode': "Ürünün stok kodu"
 
         # }
+
+# kredi kartı oluşturma
+class SaveCreditCard(forms.ModelForm):
+    class Meta:
+         model=CreditCardAccount
+         fields=['cardNo', 'cardOwner', 'expiredMonthAndYear', 'cvc']

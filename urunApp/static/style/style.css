@@ -46,3 +46,10 @@ form input,label,textarea {
     display: block;
     margin-bottom: 6px;
 }
+
+.responsive-img {
+
+    width: 322px;
+    height: 322px;
+    max-height: 322px;
+}

@@ -7,7 +7,7 @@
 <style>
 
 .title {
-margin-bottom: 0;
+margin-bottom: 6px;
 }
 
 .product-footer {
@@ -31,14 +31,17 @@ padding-left: 8px;
 
     <h1>En son eklenen ürünler</h1>
 
+
+    {% if request.user.is_authenticated %}
+
     <div class="text-end">
         <a href="{% url 'urun-olustur' %}">
             <button class="btn btn-success">+</button>
         </a>
-       
     </div>
 
     <hr>
+    {% endif %}
 
     <div class="row">
 
@@ -56,7 +59,7 @@ padding-left: 8px;
           
         
             <div>
-                <img src="{{veri.resimAyarla}}" class="card-img-top" alt="...">
+                <img src="{{veri.resimAyarla}}" class="card-img-top responsive-img" alt="resim-{{veri.ad}}">
             </div>
             
         

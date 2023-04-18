@@ -54,6 +54,14 @@ def urunDetay(request, urunId):
         else:
             # urunKontrol false ise
               return redirect('hata-sayfasi')
+        
+        # isteği yapan kişi ürünü oluşturan kişi ise
+        if urunKontrol.olusturan.id == request.user.id:
+            context['productOwner'] = True
+        # isteği yapan kişi adminse
+        if request.user.is_superuser:
+            context['admin'] = True
+        
 
         return render(request, 'product_detail.html', context)
 
@@ -61,6 +69,10 @@ def urunDetay(request, urunId):
 # ürün oluşturma sayfası
 from .forms import CreateUrun
 def urunOlustur(request):
+    # eğer kişi kayıtlı değilse
+    if request.user.is_authenticated is not True:
+        return redirect('user-login')
+    
     # eğer bana post isteği gelmişse
     if request.method == "POST":
         form = CreateUrun(request.POST, request.FILES)
@@ -76,8 +88,44 @@ def urunOlustur(request):
       return render(request, 'createProduct.html', {'form': form})
 
 # ürün düzenleme sayfasi vs
+def urunDuzenle(request, urunId):
+    # post, get
+    context = {}
+    urun = Urun.objects.filter(id=urunId).first() 
 
+    if urun is None:
+        return redirect('hata-sayfasi')
+    
+    # postu yalnızca oluşturan kişi ya da bir admin düzenleyebilir.
+    if urun.olusturan.id != request.user.id and request.user.is_superuser is not True:
+         raise PermissionDenied()
+    
+    context['data'] = urun
+    context['form'] = CreateUrun(instance=urun)
 
+    if request.method == 'POST':
+        # requestten gelen postu ve fieldi al
+        urunForm = CreateUrun(request.POST, request.FILES, instance=urun)
+        if urunForm.is_valid():
+            # veritabanına kayıt-et
+            urunForm.save()
+            # urunun sayfasına gönder
+            return redirect('/urun/' + str(urunId))
+    else:
+        return render(request, 'editProduct.html', context)
+
+# ürün silme sayfası
+def urunSil(request, urunId):
+        
+        urun = Urun.objects.filter(id=urunId).first()
+
+        if urun:
+            urun.delete()
+            # session mesaj gönder
+            return redirect('anasayfa')
+        
+        else:
+            return redirect('hata-sayfasi')
 # yorum düzenleme sayfasi
 from .forms import EditComment
 def editComment(request, urunId, yorumId):
@@ -121,9 +169,10 @@ def deleteComment(request, urunId, yorumId):
             messages.warning(request, message="Üzgünüz... Böyle bir yorum bulamadık.")
             return redirect('hata-sayfasi')
         # yetkisi yoksa
-        if yorum.yazar.id != request.user.id:
+        if yorum.yazar.id != request.user.id and request.user.is_superuser is not True:
            raise PermissionDenied()
         
         # yorumu sil
         yorum.delete()
+        messages.success(request, 'Başarılı bir şekilde yorum silindi')
         return redirect('/urun/' + str(urunId))

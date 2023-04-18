@@ -2,7 +2,22 @@
 {% block siteBaslik %} {{data.ad}} {% endblock siteBaslik %}
 
 
+{% block ekOgeler %}
+  
+<style>
+    #owner {
+        font-size: 15px;
+        color: purple;
+    }
 
+    .edit-product {
+
+        text-decoration: none;
+        color: orange;
+        padding: 6px;
+    }
+</style>
+{% endblock ekOgeler %}
 
 {% block site-icerigi %}
 
@@ -10,13 +25,19 @@
 
 <div class="row">
 
+    {% for message in messages  %}
+      
+    <div id="success-msg" class="alert alert-success">
+        <p>{{message}}</p>
+    </div>
+    {% endfor %}
 
 <div class="col-12">
 
     <div class="row">
         <div class="col-6">
          <div class="card mb-3">
-            <img id="myimage" src="/{{data.resimAyarla}}" class="card-img-top" alt="...">
+            <img id="myimage" src="/{{data.resimAyarla}}" class="card-img-top" alt="ürün-resmi">
         </div>
 
         </div>
@@ -26,7 +47,25 @@
         <div class="col-6">
             
             <div class="card-body">
-                <h1 class="card-title text-center">{{data.ad}}</h1>
+              
+                <div class="d-flex align-items-center">
+                    <h1 style="margin-right: auto;" class="card-title">{{data.ad}}</h1>
+                    
+
+                    {% if request.user.is_authenticated %}
+                    
+                    {% if productOwner or admin %}
+                    <div class="edit-product">
+                        <a class="edit-product" href="{% url 'urun-duzenle' data.id %}">Ürünü Düzenle</a>
+                        <a id="deleteItem" class="edit-product text-danger" href="{% url 'urun-sil' data.id %}">Ürünü Sil</a>
+                    </div>  
+                    {% endif %}
+                    
+
+                    {% endif %}
+                    
+                </div>
+
                 <hr>
                 <p class="card-text"> <b>Ürün Açıklaması:</b> {{data.aciklama}}</p>
                 <p class="card-text"> <b>Ürün Fiyatı:</b> {{data.fiat}}</p>
@@ -55,9 +94,20 @@
     <div class="card mb-4">
         <div class="card-header">
         <div class="card-author">
+
+
+            {% if data.olusturan.id == yorum.yazar.id %}
+
+            <h5> <span id="owner">[Ürünün Sahibi]</span> {{yorum.yazar}} </h5>
+
+            {% else %}
+
             <h5> {{yorum.yazar}} </h5>
 
-            {% if request.user.is_authenticated and yorum.yazar.id == request.user.id %}
+            {% endif %}
+        
+
+            {% if yorum.yazar.id == request.user.id or admin %}
     
             <div class="card-comment-options">
 
@@ -111,5 +161,47 @@
     
 </div>
 
-</div>
+
+<script>
+document.getElementById('deleteItem').addEventListener('click', function(event) {
+
+event.preventDefault()
+const onay = confirm("Bu ürünü silmek istediğinize emin misiniz? Bu işlem geri alınamaz")
+
+if(onay) {
+    window.location = event.target.href
+} 
+
+})
+
+document.querySelectorAll('.delete').forEach(function(a) {
+
+a.onclick = function(event) {
+
+event.preventDefault();
+const onay = confirm("Bu yorumu silmek istediğinize emin misiniz?")
+
+if (onay) {
+
+    window.location = event.target.href
+}
+
+}
+})
+
+</script>
+
+
+
+<script>
+
+setTimeout(() => {
+
+const div = document.getElementById('success-msg')
+
+if(div) div.remove();
+
+}, 5000);
+</script>
+
 {% endblock site-icerigi %}
