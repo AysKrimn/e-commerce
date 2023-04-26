@@ -1,4 +1,4 @@
-"""ilkUygulama URL Configuration
+"""uygulama URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.1/topics/http/urls/
@@ -15,28 +15,30 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+# konfigürasyon dosyaları
 from django.conf import settings
 from django.conf.urls.static import static
 
-# view dosyasını import et
+# viewleri import
 from urunApp.views import *
 from userApp.views import *
-# Dosyaları kayıt et
+
 urlpatterns = [
     path('yonetici/', admin.site.urls),
-    path("", index, name="anasayfa"),
-    path("urun/<urunId>", urunDetay, name="urun-detay-sayfasi"),
-    path("bulunamadi", hataSayfasi, name="hata-sayfasi"),
-    path("urun-olustur", urunOlustur, name="urun-olustur"),
-    path("urun-duzenle/<urunId>", urunDuzenle, name="urun-duzenle"),
-    path("urun-sil/<urunId>", urunSil, name="urun-sil"),
-
-    path("yorumlar/gonderi/<urunId>/yorum/<yorumId>", editComment, name="yorum-duzenle"),
-    path("yorumlar/gonderi/<urunId>/yorum-sil/<yorumId>", deleteComment, name="yorum-sil"),
-    # user-login/register/signout
+    path('', anasayfa, name="anasayfa"),
+    path("urun/olustur", createProduct, name="create-product"),
+    path('urun/<urunId>', detail_page, name="urun-detay-sayfasi"),
+    path('urun/duzenle/<urunId>', editProduct, name="urun-duzenle"),
+    path('urun/sil/<urunId>', deleteProduct, name="delete-product"),
+    path('yorum-yap/<urunId>', makeComment, name="yorum-yap"),
+    path('yorum-sil/gonderi/<urunId>/yorum/<yorumId>', deleteComment, name="yorum-sil"),
+    path('yorum-duzenle/gonderi/<urunId>/yorum/<yorumId>', editComment, name="yorum-duzenle"),
+    path('sayfa-bulunamadi', sayfa_bulunamadi, name="404"),
+    # user-app burada başlar
     path('kayit-ol', user_register, name="user-register"),
-    path('giris-yap', user_login, name="user-login"),
     path('hesap', user_setting, name="user-setting"),
+    path('giris-yap', user_login, name="user-login"),
     path('cikis-yap', user_logout, name="user-logout")
+    # user-app burada biter
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
