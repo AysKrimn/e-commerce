@@ -5,78 +5,48 @@
   
 <style>
 
-    #create-product {
-
-    width: 50%;
-    margin: auto;
+    .form-area {
+        width: 50%;
+        margin: auto;
     }
 
-    form button { width: 100%;}
+    .submitBtn button { width: 100%;}
 
 </style>
 {% endblock ekOgeler %}
 
 {% block site-icerigi %}
   
-
 <div class="container mt-5">
 
-<h2>Ürün Oluşturun</h2>
-<hr>
-<form id="create-product" action="{% url 'urun-olustur' %}" method="post" enctype="multipart/form-data">
+    <div class="form-area">
+
+    <form action="{% url 'create-product' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
-
+        
         {{form}}
-        <!-- <div class="mb-3">
-            <label for="urunQR" class="form-label">Ürünün QR Kodu</label>
-            <input type="text" class="form-control" id="urunQR" name="QR">
-            <div class="form-text">Ürünün QR Kodu</div>
-        </div>
-  
-        <div class="mb-3">
-          <label for="urunAdi" class="form-label">Ürünün Adı</label>
-          <input type="text" class="form-control" id="urunAdi" name="urunAd" required>
-          <div class="form-text">We'll never share your email with anyone else.</div>
+
+        <div class="submitBtn">
+            <button class="btn btn-success">Oluştur</button>
         </div>
 
+    </form>
 
-        <div class="mb-3">
-            <label for="urunFiyat" class="form-label">Ürünün Fiyatı</label>
-            <input type="text" class="form-control" id="urunFiyat" name="urunFiyat" required>
-            <div class="form-text">Ürünün fiyatı</div>
-        </div>
-
-
-        <div class="mb-3">
-            <textarea name="urunAciklama" id="urunAciklama" cols="30" rows="10"></textarea required>
-            <div class="form-text">Ürününün açıklaması</div>
-        </div>
-  
-
-        <div class="mb-3">
-            <label for="urunResim" class="form-label">Ürünün Resmi</label>
-            <input type="file" class="form-control" id="urunResim" name="urunResim">
-        </div> -->
-
-
-
-        <div class="mt-3">
-            <button type="submit" class="btn btn-success">Oluştur</button>
-        </div>
-     
-
-
-</form>
-
+</div>
 </div>
 
 
 <script>
+// bütün inputları seç
+const inputs = document.querySelectorAll('form input, textarea') // nodelist 
+inputs.forEach(function(input) {
+// inputlara class ver
+input.classList.add('form-control')
 
-const file = document.getElementById('id_resim')
-if(file) {
+})
 
-   file.classList.add('form-control')
-}
+
+
 </script>
+
 {% endblock site-icerigi %}

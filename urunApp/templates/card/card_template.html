@@ -111,10 +111,10 @@
     </div>
     <div class="field-container">
         <label style="margin-top: 2rem;" for="expirationdate">Son Kullanma Tarih (ay/yy)</label>
-        <input name="expiredMonthAndYear" id="expirationdate" type="text" pattern="[0-9]*" inputmode="numeric" required>
+        <input name="expiredMonthAndYear" id="expirationdate" type="text" inputmode="numeric" maxlength="5" required>
     </div>
     <div class="field-container">
         <label style="text-align: center; margin-top: 2rem;" for="securitycode">CVC</label>
-        <input name="cvc" id="securitycode" type="text" pattern="[0-9]*" inputmode="numeric" required>
+        <input name="cvc" id="securitycode" type="text" pattern="[0-9]*" inputmode="numeric" maxlength="3" required>
     </div>
 </div>

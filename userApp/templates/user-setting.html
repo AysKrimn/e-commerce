@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block ekOgeler %}
+<link rel="stylesheet" href="{% static 'style/card.css' %}">
+
+<style>
+
+    
+.helper{
+    cursor: pointer;
+    color: blue;
+}
+
+.gizli {
+    display: none;
+}
+</style>
+
+{% endblock ekOgeler %}
+
+
+
+
+{% block site-icerigi %}
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Kart Bilgilerini Düzenle</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      
+        <form action="{% url 'user-setting' %}" method="post">
+          {% csrf_token %}
+          {{form}}
+
+          <input type="hidden" name="_cardDuzenle" value="true">
+        
+
+     
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+        <button type="submit" class="btn btn-success">Onayla</button>
+      </div>
+
+    </form>
+    </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Şifre Bilgilerini Düzenle</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      
+        <form action="{% url 'user-setting' %}" method="post">
+          {% csrf_token %}
+        
+          <input type="password" name="password_check_1" placeholder="Şifre">
+          <input type="password" name="password_check_2" placeholder="Şifre Tekrar">
+
+          <input type="hidden" name="_sifreDuzenle" value="true">
+        
+
+     
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+        <button type="submit" class="btn btn-success">Onayla</button>
+      </div>
+
+    </form>
+    </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="container mt-5">
+
+{% for message in messages %}
+  
+<div id="warning-box" class="alert alert-info" role="alert">
+  {{message}}
+</div>
+
+{% endfor %}
+<h3>Hesap Ayarları</h3>
+<hr>
+
+<p>Hesap Adı: {{request.user.username}} | <span class="helper" data-bs-toggle="modal" data-bs-target="#exampleModal2">Şifre Değiştir</span> </p>
+<p>Email: {{request.user.email}}</p>
+<p>Hesap oluşturulma tarihi: {{request.user.date_joined}}</p>
+
+
+<div class="payment-service mt-5">
+    <h3>Ödeme Yöntemi</h3>
+    <hr>
+
+    {% if cardDetail is False %}
+    <p>Herhangi bir kayıtlı ödeme sisteminiz yok. <span class="helper">Eklemek İçin Tıklayın</span> </p>
+
+    <div class="add-payment gizli">
+    
+    <h3>ÖDEME BİLGİLERİ</h3>
+    <hr>
+    <form action="{% url 'user-setting' %}" method="post" style="width: 50%;">
+        {% csrf_token %}
+        {% include "card/card_template.html" %}
+
+
+            <div style="margin-left: 18px;" class="mt-3">
+                <button class="btn btn-success">Kaydet</button>
+            </div>
+
+    </form>
+    </div>
+    {% else %}
+    <p><ins>{{cardDetail.cardNo}}</ins> numaralı kart ile ödeme yapılıyor. <span data-bs-toggle="modal" data-bs-target="#exampleModal" class="helper">Düzenle</span> </p>
+
+    {% endif %}
+    </div>
+
+
+    <div class="purchase-history">
+        <h3>Satın Alma Geçmişi</h3>
+        <hr>
+    </div>
+</div>
+
+
+
+<script src="https://unpkg.com/imask"></script>
+<script src="{% static 'script/cardHandler.js' %}"></script>
+<script>
+
+  const warningBox = document.getElementById('warning-box')
+  setTimeout(() => {
+  
+  if(warningBox) warningBox.remove();
+  
+  }, 5000);
+</script>
+
+{% endblock site-icerigi %}

@@ -2,121 +2,125 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-# credicardaccount modeli
-from urunApp.models import CreditCardAccount
-
+from urunApp.models import UserCreditCard
+# Create your views here.
 
 # user kayıt olursa
 def user_register(request):
 
     if request.method == 'POST':
-        # verileri çek
-        # veritabanına işle
+        
         k_ad = request.POST.get('k_ad')
         k_email = request.POST.get('k_email')
         k_sifre = request.POST.get('k_sifre')
 
         if k_ad and k_email and k_sifre:
-            # sorgulama işlemleri
+            # veritabanını sorgula
             try:
-                User.objects.get(email=k_email)
-                # hata mesajı verdir
-                messages.error(request, message="Bu email adresine sahip bir kullanıcı zaten mevcut") 
-                return redirect('user-register')
-            except User.DoesNotExist:
-                # böyle bir kullanıcı yoktur kayıt et
-                User.objects.create_user(username=k_ad, email=k_email, password=k_sifre)
-                messages.success(request, 'Başarılı bir şekilde kayıt oldunuz. Lütfen giriş yapın.')
-                # gir yapmaya yönlendir
-                return redirect('user-login')
-            
-
+              User.objects.get(email = k_email)
+              # böyle bir kullanıcı varsa hata mesajı döndür
+              messages.error(request, message="Bu email adresine sahip bir hesap mevcut")
+              return redirect('user-register')  
+            except:
+              # böyle bir kullanıcı yoktur o zaman kayıt et 
+               User.objects.create_user(username=k_ad, email=k_email, password=k_sifre)
+               #  başarılı measjı ver
+               messages.success(request, message='Başarılı bir şekilde kayıt oldunuz. Lütfen giriş yapın.')
+               return redirect('user-login')  
+    
     else:
-        return render(request, 'user-register.html')
+      return render(request, 'user-register.html')
 
 
-
-# user giriş yapmaya çalışırsa
+# user giriş yaparsa
 def user_login(request):
 
-    if request.method == 'POST':
+    if request.method == "POST":
         k_ad = request.POST.get('k_ad')
         k_sifre = request.POST.get('k_sifre')
 
         if k_ad and k_sifre:
-            user = authenticate(request, username=k_ad, password=k_sifre)
+           user = authenticate(request, username=k_ad, password=k_sifre)
 
-            if user is not None:
-                # giriş yaptır
-                login(request, user)
-                return redirect('anasayfa')
-            else:
-                messages.error(request, 'Kullanıcı adı veya parola hatalı')
-                return redirect('user-login')
+           if user is not None:
+              login(request, user)
+              # ansayfaya yönlendir
+              return redirect('anasayfa')
+           else:
+              # hata mesajı yazdır ve logine yönlendir
+              messages.error(request, message='kullanıcı adı veya parola hatalı')
+              return redirect('user-login')
+    
     else:
-       # eğer kullanıcı zaten login olmuşsa    
-       if request.user.is_authenticated:
-           return redirect('anasayfa')
-       else:           
-          return render(request, 'user-login.html')
+       # get isteği geldiğinde sayfayı gönder
+       return render(request, 'user-login.html')
     
 
-# user çıkış yaparsa
+# çıkış yapma
 def user_logout(request):
-    # giriş yapmayan kullanıcıları engelle
-    if request.user.is_authenticated:
+
         logout(request)
+        # anasayfaya yönlendir
         return redirect('anasayfa')
-    else:
-        return redirect('anasayfa')
-    
-
 # hesap ayarları
-from urunApp.forms import SaveCreditCard
+from urunApp.form import CreditCardForm
 def user_setting(request):
-      context = {}
-      cardForm = SaveCreditCard()
-      paymentDetail = CreditCardAccount.objects.filter(user=request.user).first()
-
-      if paymentDetail is None:
+    context = {}
+    cardForm = CreditCardForm()
+    # kullanıcının kartı varmı  yokmu
+    hesapBilgisi = UserCreditCard.objects.filter(user=request.user).first()
+    
+    if hesapBilgisi is None:
         context['cardDetail'] = False
-      else:
-          context['cardDetail'] = paymentDetail
-          context['cardForm'] = SaveCreditCard(instance=paymentDetail)
+    else:
+        context['cardDetail'] = hesapBilgisi
+        context['form'] = CreditCardForm(instance=hesapBilgisi)
 
+    # post isteği gelirse
+    if request.method == 'POST':
 
-      # post isteği atılmışsa
-      if request.method == 'POST':
-          # form üzerinden gönderilen bütün verilere ulaş  
-          kartGuncellemeIstegi = request.POST.get('_kart_guncelle')
-          print("GUNCELLEME İSTEGİ:", kartGuncellemeIstegi)
+        duzenlemeIstegi = request.POST.get('_cardDuzenle')
+        sifreDegistirmeIstegi = request.POST.get('_sifreDuzenle')
 
-          if kartGuncellemeIstegi:
-            cardForm = SaveCreditCard(request.POST, instance=paymentDetail)
+        if sifreDegistirmeIstegi:
+            # şifre değiştirme isteği gelmiş inputları al
+            sifre_1 = request.POST.get('password_check_1')
+            sifre_2 = request.POST.get('password_check_2')
+
+            if sifre_1 and sifre_2 and sifre_1 == sifre_2:
+                # user objesini bul
+                user = User.objects.filter(id=request.user.id).first()
+                # şifre değiş
+                user.set_password(sifre_1)
+                user.save()
+                # çıkış yap ve tekrar girmesini iste
+                logout(request)
+                return redirect('user-login')
+
+        # düzenleme isteği varsa kart bilgilerini güncelle
+        if duzenlemeIstegi:
+            cardForm = CreditCardForm(request.POST, instance=hesapBilgisi)
             if cardForm.is_valid():
                 cardForm.save()
-            else:
-                print(cardForm.errors.as_text())
-            # session mesaj gönder vs
-            return redirect('user-setting')
-          
-          else:
-            # Kart düzenleme değilse 
-            cardForm = SaveCreditCard(request.POST)
-            if cardForm.is_valid():
-                # form validation (doğrulanmasında hata olmadıysa)
-                cardForm = cardForm.save(commit=False)
-                cardForm.user = request.user
-                # şimdi kayıt-et
-                cardForm.save()
+                messages.success(request, message="Başarılı bir şekilde kart bilgileriniz güncellendi.")
                 return redirect('user-setting')
-            
             else:
-                # formda herhangi bir validation hatası meydana gelirse
-                print(cardForm.errors.as_text())
-                # hata meydana geldi ne istersen onu yap
-                return redirect('hata-sayfasi')  
-      
-      else:
-         # get istekleri
-         return render(request, 'user-settings.html', context)
+                # potansiyel hata durumlarında
+                messages.error(request, message='Üzgünüz kartınızı güncellerken bir takım sorunlar meydana geldi. Daha sorna tekrar dene.')
+                return redirect('404')
+            
+        # düzenleme isteği yoksa alt koşulu çalıştır:
+        # POST ÜZERİNDEN VERİLERİ ÇEK (KARTI YOKSA KART OLUŞTUR)
+        cardForm = CreditCardForm(request.POST)
+        if cardForm.is_valid():
+            cardForm = cardForm.save(commit=False)
+            cardForm.user = request.user
+            cardForm.save()
+            return redirect('user-setting')
+        else:
+            print('hatalar:', cardForm.errors.as_data())
+            messages.error(request, message='Üzgünüz kartınızı oluştururken bir takım sorunlar meydana geldi. Daha sorna tekrar dene.')
+            return redirect('404')
+    else:
+     # get istekleri
+     return render(request, 'user-setting.html', context)

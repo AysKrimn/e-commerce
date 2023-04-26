@@ -1,34 +1,39 @@
 {% extends "base.html" %}
+{% block baslik %} Kayıt Ol {% endblock baslik %}
 
-{% block siteBaslik %} Kayıt Ol {% endblock siteBaslik %}
 {% block site-icerigi %}
   
+
 <div class="container mt-5">
 
 <div class="form-area">
 
-<h3>Kayıt Ol</h3>
-<hr>
+    <h3>Kayıt Ol</h3>
+    <hr>
 
-<form action="{% url 'user-register' %}" method="post">
-{% csrf_token %}
+    <form action="{% url 'user-register' %}" method="post">
+        {% csrf_token %}
+        
+        {% for message in messages %}
+          
+        <p class="error"> {{message}} </p>
 
-{% for message in messages %}
-  <p style="color: red;"> {{message}} </p>
-{% endfor %}
+        {% endfor %}
 
-<input type="text" class="form-control" placeholder="Kullanıcı Adı" name="k_ad">
-<input type="email" class="form-control" placeholder="E-mail Adresi" name="k_email">
-<input type="password" class="form-control" placeholder="Şifre" name="k_sifre">
+        <input type="text" placeholder="Kullanıcı Adı" name="k_ad"  class="form-control">
+        <input type="email" placeholder="Email" name="k_email" class="form-control">
+        <input type="password" placeholder="Şifre" name="k_sifre" class="form-control">
+        <span> Zaten hesabınız var mı? <a href="{% url 'user-login' %}">giriş yapın</a> </span>
+   
+        <div class="mt-3">
 
-<span>Zaten bir hesabın var mı? <a href="{% url 'user-login' %}">buradan giriş yapabilirsin</a> </span>
+            <button class="btn btn-success">Kayıt Ol</button>
+        </div>
+   
+    </form>
 
-<div class="mt-3">
-    <button class="btn btn-success">Kayıt Ol</button>
-</div>
 
-</form>
-
+   
 </div>
 
 </div>

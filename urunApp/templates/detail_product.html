@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+{% block baslik %}  {{data.ad}} {% endblock baslik %}
+
+{% block ekOgeler %}
+  
+<style>
+
+.product-options a {
+
+    text-decoration: none;
+    display: inline-block;
+    padding: 6px;
+}
+.product-showcase {
+
+    width: 50%;
+    margin: auto;
+}
+
+#product-owner {
+
+    font-size: 15px;
+    color: purple;
+    font-weight: bold;
+}
+
+.product-showcase img { width: 100%;}
+
+</style>
+{% endblock ekOgeler %}
+
+{% block site-icerigi %}
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Ödemeyi Onayla</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+            {% if hasCard is True %}
+            
+            <form action="" method="post">
+            {% csrf_token %}
+    
+            <div class="p-3">
+            <p class="text-danger">Lütfen aşağıdaki bilgileri onaylayın bu işlem geri alınamaz.</p>
+    
+            <p>Ürün: {{data.ad}}</p>
+            <p>Satın Alınan Adet: {{data.stokAdet}}</p>
+            <p>Garanti: {{data.garantiKontrol}}</p>
+            <p>Fiyat: {{data.fiat}} TL</p>
+            </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+          <button type="submit" class="btn btn-primary">Onayla</button>
+
+        </div>
+        </form>
+
+        {% else %}
+
+
+        <p>Lütfen işleme devam etmeden önce <a href="{% url 'user-setting' %}">Hesap Ayarlarından</a> bir ödeme metodu belirleyiniz.</p>
+
+        <div class="modal-footer">
+            
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+  
+        </div>
+        {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+<div class="container mt-5">
+
+
+    <div class="row">
+
+        <div class="col-12">
+
+            {% for message in messages %}
+        
+            <div id="alert-msg" class="alert alert-info">
+                <p>{{message}}</p>
+            </div>
+
+            {% endfor %}
+
+            <div class="row">
+
+                <div class="col-lg-6">
+                    <!--  resim alanı -->
+                    <div class="product-showcase">
+                        <img src="/{{data.resimKontrol}}" alt="{{data.ad}}">
+                    </div>
+                   
+                </div>
+
+                <div class="col-lg-6">
+
+                <div class="d-flex align-items-center">
+
+                    <h3 style="margin-right: auto;">{{data.ad}}</h3>
+
+                    {% if admin or urunSahibi %}
+                
+                    <div class="product-options">
+
+                        <a href="{% url 'urun-duzenle' data.id %}">Ürünü Düzenle</a>
+                        <a class="text-danger product-delete" href="{% url 'delete-product' data.id %}">Ürünü Sil</a>
+                    </div>
+
+                 {% endif %}
+
+                </div>
+                <hr>
+        
+                <p> <b>Seri Numarası:</b> {{data.seriNumarasiKontrol}}</p>
+                <p> <b>Ürünün Açıklaması: </b> {{data.urunDetayi}}</p>
+                <p> <b>Tutar:</b> {{data.fiat}} TL</p>
+                <p> <b>Stok:</b> {{data.stokKontrol}}</p>
+                <p> <b>Garantisi:</b> {{data.garantiKontrol}} </p>
+
+                <button id="eksilt">-</button>
+                <input id="sayac" type="number">
+                <button id="arttir">+</button>
+                <button data-bs-toggle="modal" data-bs-target="#exampleModal">Satın Al</button>
+             
+
+                </div>
+
+
+        
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+
+    <div class="mt-4">
+        <h3>Yorumlar</h3>
+        <hr>
+
+        {% for yorum in data.yorumlar.all %}
+          
+        <div class="card mb-4">
+            <div class="card-header">
+
+             <div class="d-flex align-items-center">
+
+
+                {% if yorum.yazar.id == data.satici.id %}
+                <h5> <span id="product-owner">[Ürün Sahibi]</span> {{yorum.yazar}} </h5>
+                
+                {% else %}
+                <h5> {{yorum.yazar}} </h5>
+                {% endif %}
+               
+
+                {% if request.user.id == yorum.yazar.id or admin %}
+              
+                <div class="card-options">
+                    <a class="edit" href="{% url 'yorum-duzenle' yorum.product.id yorum.id  %}">Düzenle</a>
+                    <a class="delete" href="{% url 'yorum-sil' yorum.product.id yorum.id %}">Sil</a>
+                </div>
+
+                  
+                {% endif %}
+              
+             </div>
+     
+            </div>
+            <div class="card-body">
+              <blockquote class="blockquote mb-0">
+                {{yorum.mesaj|linebreaks}}
+                <footer class="blockquote-footer mt-2"> <small>{{yorum.olusturuldu}}</small>  </footer>
+              </blockquote>
+            </div>
+          </div>
+
+        {% endfor %}
+
+        <!-- Yorum Yap -->
+        {% if request.user.is_authenticated %}
+   
+        <div class="mt-5" style="width: 50%;">
+
+            <form action="{% url 'yorum-yap' data.id %}" method="post">
+
+                {% csrf_token %}
+                <textarea placeholder="Ürün Hakkındaki Yorumunuz" name="message"></textarea>
+
+                <div class="mt-3">
+
+                    <button class="btn btn-primary" type="submit">Yorum Yap</button>
+                </div>
+            </form>
+        </div>
+
+        {% else %}
+
+        <div class="text-center">
+            <p>Yorum yapmak için lütfen <a href="{% url 'user-login' %}"> giriş yapınız </a>  </p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+
+
+<script>
+
+document.querySelectorAll('.delete').forEach(function(a) {
+
+    // click eventi ata
+    a.onclick = function(event) {
+
+        // link öğesinin varsayılan değerini al
+        event.preventDefault();
+        // onay al
+        const onay = confirm("Bu mesajı silmek istediğinize emin misiniz? Bu işlem bir daha geri alınamaz.")
+
+        if(onay) {
+            // endpointe istek at
+           window.location = event.target.href
+        }
+
+    }
+})
+
+
+// silme fonksiyon
+document.querySelectorAll('.product-delete').forEach(function(a) {
+
+// click eventi ata
+a.onclick = function(event) {
+
+    // link öğesinin varsayılan değerini al
+    event.preventDefault();
+    // onay al
+    const onay = confirm("Bu ürünü kaldırmak istediğinize emin misiniz? Bu işlem bir daha geri alınamaz.")
+
+    if(onay) {
+        // endpointe istek at
+       window.location = event.target.href
+    }
+
+}
+})
+
+</script>
+
+
+<script>
+
+const eksiltBtn = document.getElementById('eksilt')
+const arttirBtn = document.getElementById('arttir')
+const sayacInput = document.getElementById('sayac')
+sayacInput.value = 1;
+const maxAmount = "{{data.stokAdet}}"
+// bunlara fonksiyonlar ata
+eksiltBtn.onclick = function() {
+// 0'ın altına gitme
+if (sayacInput.value <= 1) return;
+
+// tıklandığında 1 eksilt
+sayacInput.value -= 1 
+}
+
+arttirBtn.onclick = function() {
+
+ if (sayacInput.value >= maxAmount) {
+    return alert(`Maalesef bu ürün için maximum ${maxAmount} adet satın alabilirsiniz.`)
+ }
+ 
+ let asNumber = Number(sayacInput.value)
+ asNumber += 1;
+ sayacInput.value = asNumber
+}
+
+
+sayacInput.onchange = function(event) {
+
+    console.log("this:", this.value)
+    // input her güncellendiğinde
+    let inputValue = event.target.value
+
+    if (inputValue >= maxAmount) {
+        alert(`Maalesef bu ürün için maximum ${maxAmount} adet satın alabilirsiniz.`)
+        return event.target.value = maxAmount
+    }
+
+    // eksiye düşme durumunu engelle
+    if (inputValue < 1) {
+
+        event.target.value = 1;
+        return;
+
+    }
+}
+
+</script>
+
+<script>
+
+setTimeout(() => {
+    
+const div = document.getElementById('alert-msg');
+if(div) div.remove()
+
+}, 5000);
+</script>
+{% endblock site-icerigi %}

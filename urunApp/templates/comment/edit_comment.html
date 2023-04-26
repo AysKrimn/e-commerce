@@ -15,10 +15,10 @@
 
 <div class="wrapper">
 
-<h3>Ürün Düzenle</h3>
+<h3>Yorum Düzenle</h3>
 <hr>
 
-<form action="{% url 'urun-duzenle' data.id %}" method="post" enctype="multipart/form-data">
+<form action="{% url 'yorum-duzenle' productId commentId %}" method="post">
 {% csrf_token %}
 
 {{form}}

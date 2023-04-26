@@ -1,55 +1,76 @@
-#site-nav {
+#site-navbar {
 
-    background-color: rgb(12, 10, 10);
-    color:  white
+    background-color: rgb(26, 22, 22);
+    color: white;
 }
 
-#site-nav * {
+#site-navbar * {
 
     color: inherit;
 }
 
 
+.image-container {
 
-.card-author {
-
-    display: flex;
-    align-items: center;
+    min-height: 322px;
+    max-height: 322px;
 }
 
-.card-comment-options a {
+.responsive-img {
 
+    height: 322px;
+    object-fit: contain;
+}
+
+form input, textarea, label {
+
+    width: 100%;
+    display: block;
+    margin-bottom: 8px;
+}
+
+form textarea {
+
+    resize: none;
+    min-height: 200px;
+}
+
+.form-area {
+    width: 50%;
+}
+
+
+.error {
+    color: red;
+}
+
+.success {
+    color: green;
+}
+
+
+.fixed-side {
+
+    left: -90px !important;
+    color: #262634 !important;
+}
+
+.d-flex h5 {
+
+    margin-right: auto;
+}
+.card-options a {
     display: inline-block;
-    padding: 6px;
     text-decoration: none;
+    padding: 6px;
 }
 
 .edit {
-    color: rgba(199, 129, 0, 0.74);
+
+    color: rgb(221, 163, 55);
 }
 
 .delete {
 
     color: red;
-}
-
-.card-author h5 {
-
-    margin-right: auto;
-}
-
-
-.form-area {
-    width: 50%;
-}
-form input,label,textarea {
-    display: block;
-    margin-bottom: 6px;
-}
-
-.responsive-img {
-
-    width: 322px;
-    height: 322px;
-    max-height: 322px;
 }

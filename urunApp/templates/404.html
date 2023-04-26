@@ -4,18 +4,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bulunamadı</title>
+    <title>Üzgünüz...</title>
 </head>
 <body>
-
-    {% for message in messages  %}
-    <h1>{{message}}</h1>
-
-    {% empty %}
-    <h1>Üzgünüz... Aradığınız ürün bulunamadı.</h1>
-    {% endfor %}
-
-    <a href="{% url 'anasayfa' %}">Aramaya geri dönün ve keşfetmeye devam edin</a>
     
+    <h1>Üzgünüz... Aradığınız ürünü bulamadık..</h1>
+    <p>Keyfiniz kaçmasın <a href="{% url 'anasayfa' %}">Gezinmeye Devam edin</a></p>
 </body>
 </html>

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import *
-# Modellerini admin sayfasında göster
+# Modellerini admin sayfasına kayıt et
 admin.site.register(Urun)
-admin.site.register(Yorumlar)
-admin.site.register(CreditCardAccount)
+admin.site.register(Yorum)
+admin.site.register(UserCreditCard)
